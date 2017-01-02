@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>MangaReader made by emmala</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  </head>
+  <body>
+    <style>
+      body{
+        font-family:'Roboto';
+        margin: 0px;
+      }
+
+      #container{
+        margin: 8px;
+      }
+    </style>
+    <div id="root"></div>
+    <script>
+      {
+        const script = document.createElement('script');
+        const port = process.env.PORT || 3000;
+        script.src = (process.env.HOT)
+          ? 'http://localhost:' + port + '/dist/bundle.js'
+          : './dist/bundle.js';
+
+        document.body.appendChild(script);
+      }
+    </script>
+  </body>
+</html>
