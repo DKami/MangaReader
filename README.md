@@ -1,6 +1,6 @@
 ## Screenshot
 
-![MangaReader Demo](https://s27.postimg.org/4vhhb3phf/out2.gif)
+![MangaReader Demo](https://github.com/EmmaLa/MangaReader/raw/master/out2.gif)
 
 ## Install
 
