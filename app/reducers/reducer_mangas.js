@@ -2,7 +2,6 @@ import { PULL_MANGAS, PULL_MANGAS_SUCCESS, PULL_MANGA, PULL_MANGA_SUCCESS,
          PULL_MANGA_CHAPTER, PULL_MANGA_CHAPTER_SUCCESS
         } from '../actions/mangas';
 
-
 const INITIAL_STATE = {
   mangas : [],
   loading: false,
