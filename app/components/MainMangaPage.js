@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import {GridList, GridTile} from 'material-ui/GridList';
 import Subheader from 'material-ui/Subheader';
 import CircularProgress from 'material-ui/CircularProgress';
-import Link from 'react-router';
 import R from 'ramda';
+import { Link } from 'react-router';
 
 const loadingStyle = {marginLeft: '50%', left: -50, marginTop: '25%'}
 
@@ -35,7 +35,7 @@ export default class MainMangaPage extends Component{
     return (
       <GridTile
         key={manga.mangaId}
-        title={manga.name}
+        title={<Link to={`/manga/${manga.mangaId}`} style={{textDecoration: 'none', color: 'white'}}>{ manga.name } </Link>}
         //subtitle={<span>by <b>{tile.author}</b></span>}
       >
         <img src={manga.cover} />

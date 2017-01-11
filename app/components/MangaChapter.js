@@ -16,13 +16,18 @@ export default class MangaChapter extends Component{
     super(...arg);
     this._getPageId = R.prop('pageId');
     this._getPages = R.prop('pages');
-    this._generatePageMenuItem = (pageId) => (<MenuItem key={pageId} value={pageId} primaryText={`${pageId}`} />);
+    this._getKeyCode = R.prop('keyCode');
+    this._isLeftOrRightArrow = R.compose(R.contains(R.__, [37, 39]), this._getKeyCode)
+    this._generatePageMenuItem = (pageId) =>
+        (<MenuItem key={pageId} value={pageId} primaryText={`${pageId}`} />);
+    this._toImageNode =
+        (chapterPage) => (<img src={chapterPage.url} style={{display: 'block', margin: '0 auto'}}/>)
     this._pageToMenuItem = R.compose(this._generatePageMenuItem, this._getPageId);
     this._getMangaPageMenuItems = R.compose(R.map(this._pageToMenuItem), this._getPages);
-    this._toImageNode = (chapterPage) => (<img src={chapterPage.url} style={{display: 'block', margin: '0 auto'}}/>)
-    this._preloadImage = (chapterPage) => new Image().src = chapterPage.url;
-    this._preloadImages = R.forEach(this._preloadImage);
-    this._getImagePage = R.compose(R.map(this._toImageNode), this._preloadImages, this._getPages);
+    this._preloadNextImage = (chapterPage) => new Image().src = chapterPage.url;
+    this._getImagePage = R.compose(R.map(this._toImageNode), this._getPages);
+    this.shouldGoToPreviousPage = R.gt(R.__, 1)
+    this._previousPage = R.ifElse(this.shouldGoToPreviousPage, R.dec, R.always(1))
     this.state = { currentPage: 1, chapterImages: this._getImagePage(this.props.chapter) };
   }
   componentWillMount(){
@@ -30,7 +35,7 @@ export default class MangaChapter extends Component{
   }
 
   componentWillUnmount(){
-    console.log('UNMOUNT');
+    document.removeEventListener(this.navigationWithKeyboard);
   }
 
   componentWillReceiveProps(nextProps){
@@ -44,7 +49,7 @@ export default class MangaChapter extends Component{
 
   goToPreviousPage(){
     this.setState({
-      currentPage: R.dec(this.state.currentPage)
+      currentPage: this._previousPage(this.state.currentPage)
     });
   }
 
@@ -55,12 +60,20 @@ export default class MangaChapter extends Component{
   }
 
   displayPage(){
-    return this.state.chapterImages[R.dec(this.state.currentPage)]
+    this._preloadNextImage(R.nth(this.state.currentPage, this._getPages(this.props.chapter)));
+    return this.state.chapterImages[R.dec(this.state.currentPage)];
   }
 
   componentDidMount(){
     this.goToPreviousPage = this.goToPreviousPage.bind(this);
     this.goToNextPage = this.goToNextPage.bind(this);
+    this._triggerMovePage = R.cond([
+      [R.equals(37),  this.goToPreviousPage ],
+      [R.equals(39),  this.goToNextPage ],
+    ]);
+    this._goToPage = R.compose(this._triggerMovePage ,this._getKeyCode)
+    this._movePageEvent = R.ifElse(this._isLeftOrRightArrow, this._goToPage, () => null);
+    this.navigationWithKeyboard = document.addEventListener("keydown",this._movePageEvent, false);
   }
 
   render(){
